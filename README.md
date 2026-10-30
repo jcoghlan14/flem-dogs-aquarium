@@ -4,9 +4,9 @@ A customized edition of [Aquarium by akaloic](https://github.com/akaloic/aquariu
 
 ## Windows download
 
-Windows build is not yet verified. The included **Windows package** GitHub Actions workflow builds and packages it on Windows, then uploads a ZIP artifact. Download the artifact from a successful workflow run, extract it completely, then open **Start Aquarium.cmd**. Keep the assets folder beside the EXE. No Rust installation is needed for the packaged download.
+Open [Windows preview downloads](https://github.com/jcoghlan14/flem-dogs-aquarium/releases). Once a build finishes successfully, download **Flem-Dogs-Aquarium-Windows.zip** from the release’s Assets section. Extract it completely, then open **Start Aquarium.cmd**. Keep the assets folder beside the EXE. No Rust installation is needed. If no preview is listed yet, the first build is still pending.
 
-Windows x64 is the initial target. A graphics driver supporting the Bevy/wgpu renderer is required; actual rendering and interaction still need testing on Ethan's PC. This is an unsigned community build. Do not disable Windows security protections to run it; report any warning first.
+Windows x64 is the initial target. A graphics driver supporting the Bevy/wgpu renderer is required; actual rendering and interaction still need testing on a Windows PC. This is an unsigned community build. Do not disable Windows security protections to run it; report any warning first.
 
 - Move the pointer near fish to scatter them.
 - Left click inside the tank to drop food.
