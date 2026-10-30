@@ -46,7 +46,7 @@ for name, mode, suffix in [('Flem Dogs Aquarium', '--windowed', 'interactive'), 
  info = {'CFBundleName':name, 'CFBundleDisplayName':name, 'CFBundleIdentifier':'com.flemdogs.aquarium.'+suffix, 'CFBundleExecutable':'launch', 'CFBundlePackageType':'APPL', 'CFBundleVersion':'1', 'CFBundleShortVersionString':'0.1.0', 'NSHighResolutionCapable':True, 'LSMinimumSystemVersion':'15.0'}
  if suffix == 'desktop':info['LSUIElement']=True
  (contents/'Info.plist').write_bytes(plistlib.dumps(info))
- subprocess.run(['clang',str(cfile),'-O2','-Wall','-Wextra','-Werror',f'-DMODE="{mode}"',f'-DLOGNAME="{suffix}"','-o',str(exe)],check=True)
+ subprocess.run(['clang',str(cfile),'-O2','-mmacosx-version-min=15.0','-Wall','-Wextra','-Werror',f'-DMODE="{mode}"',f'-DLOGNAME="{suffix}"','-o',str(exe)],check=True)
  subprocess.run(['codesign','--force','--sign','-',str(contents.parent)],check=True)
 for name in ['LICENSE-MIT','LICENSE-APACHE']:
  shutil.copy2(root/name,out/name)
