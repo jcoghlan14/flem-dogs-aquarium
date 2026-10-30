@@ -1,0 +1,37 @@
+name: Publish Windows preview
+on:
+  workflow_run:
+    workflows: ['Windows package']
+    types: [completed]
+permissions:
+  actions: read
+  contents: write
+jobs:
+  publish:
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_repository.full_name == github.repository &&
+      github.event.workflow_run.head_branch == 'main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download tested Windows package and publish preview
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          BUILD_RUN: ${{ github.event.workflow_run.id }}
+          BUILD_SHA: ${{ github.event.workflow_run.head_sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "$BUILD_SHA" =~ ^[0-9a-f]{40}$ ]]
+          gh run download "$BUILD_RUN" --name Flem-Dogs-Aquarium-Windows --dir package
+          test -s package/Flem-Dogs-Aquarium-Windows.zip
+          cd package
+          sha256sum Flem-Dogs-Aquarium-Windows.zip > SHA256SUMS.txt
+          tag="windows-preview-${BUILD_SHA:0:7}"
+          if ! gh release view "$tag" >/dev/null 2>&1; then
+            gh release create "$tag" --target "$BUILD_SHA" --prerelease \
+              --title "Flem Dogs Aquarium — Windows preview" \
+              --notes "Extract the entire ZIP, then open Start Aquarium.cmd. Click to feed; scroll to zoom; right-drag to rotate; Esc quits. Includes full-screen and low-power launchers. Windows compilation and command-line startup passed. Graphics and feeding still need testing on a Windows PC. This preview is an interactive app, not a Windows wallpaper or screensaver. Based on akaloic/aquarium; original licenses are included."
+          fi
+          gh release upload "$tag" Flem-Dogs-Aquarium-Windows.zip SHA256SUMS.txt --clobber
