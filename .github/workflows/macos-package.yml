@@ -1,0 +1,42 @@
+name: Mac package
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/macos-package.yml', 'scripts/package_macos.py']
+permissions:
+  contents: write
+jobs:
+  macos:
+    runs-on: macos-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: Verify Apple silicon runner
+        run: test "$(uname -m)" = arm64
+      - name: Download CC0 scene assets
+        run: bash scripts/fetch_assets.sh
+      - name: Build Mac executable
+        run: cargo build --release --locked
+      - name: Check startup
+        run: target/release/aquarium --help
+      - name: Package Mac apps
+        run: python3 scripts/package_macos.py
+      - name: Publish Mac preview
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd dist
+          shasum -a 256 Flem-Dogs-Aquarium-Mac-Apple-Silicon.zip > SHA256SUMS-Mac.txt
+          tag="mac-preview-${GITHUB_SHA:0:7}"
+          gh release create "$tag" --target "$GITHUB_SHA" --prerelease \
+            --title "Flem Dogs Aquarium — Mac Apple silicon preview" \
+            --notes "For Apple silicon Macs (M1 or newer), macOS 15 or newer. Extract the ZIP and keep the folder together. Open Flem Dogs Aquarium.app for feeding and mouse controls, or Flem Dogs Aquarium Desktop.app for wallpaper. Original licenses and instructions are included. Build and command-line startup checked; this new package still needs a launch test on the recipient’s Mac. This community preview is ad-hoc signed, not Apple-notarized. Desktop mode has no automatic recovery or startup service." \
+            Flem-Dogs-Aquarium-Mac-Apple-Silicon.zip SHA256SUMS-Mac.txt
