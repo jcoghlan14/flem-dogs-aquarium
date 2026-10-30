@@ -1,0 +1,32 @@
+name: Windows package
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['src/**', 'assets/**', 'Cargo.*', 'scripts/**', '.github/workflows/windows.yml', 'WINDOWS-START-HERE.txt']
+permissions:
+  contents: read
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v5
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: Download CC0 scene assets
+        shell: bash
+        run: bash scripts/fetch_assets.sh
+      - name: Build Windows executable
+        run: cargo build --release --locked
+      - name: Check command-line startup
+        run: target/release/aquarium.exe --help
+      - name: Package Windows download
+        shell: pwsh
+        run: ./scripts/package_windows.ps1
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Flem-Dogs-Aquarium-Windows
+          path: dist/Flem-Dogs-Aquarium-Windows.zip
+          if-no-files-found: error
+          retention-days: 30

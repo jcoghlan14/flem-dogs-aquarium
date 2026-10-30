@@ -319,6 +319,9 @@ fn compress(variant: CompressionVariant, rgba: &[u8], w: u32, h: u32, out: &mut 
 }
 
 fn cache_dir() -> PathBuf {
+    if let Some(path) = std::env::var_os("AQ_CACHE_DIR") {
+        return PathBuf::from(path);
+    }
     match std::env::var_os("HOME") {
         Some(home) if cfg!(target_os = "macos") => PathBuf::from(home).join("Library/Caches/aquarium/textures"),
         _ => std::env::temp_dir().join("aquarium-textures"),

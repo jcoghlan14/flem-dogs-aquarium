@@ -193,7 +193,17 @@ fn poll_desktop_cursor(
             return;
         }
         power.next_desktop_check = now + 0.12;
-        if crate::macos::over_desktop(p.0, p.1) {
+        let on_aquarium_screen = crate::macos::wallpaper_bounds()
+            .is_some_and(|(x, y, w, h)| p.0 >= x && p.0 < x + w && p.1 >= y && p.1 < y + h);
+        let pointer_active = if std::env::var_os("AQ_CURSOR_SCREEN").is_some() {
+            on_aquarium_screen
+        } else {
+            crate::macos::over_desktop(p.0, p.1)
+        };
+        if pointer_active {
+            if external.0.is_none() {
+                info!("desktop pointer interaction active");
+            }
             power.wake(now);
             // Window logical pixels: global points from the wallpaper's screen corner.
             let (x, y, _, _) = crate::macos::wallpaper_bounds().unwrap_or_default();

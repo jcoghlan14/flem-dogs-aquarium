@@ -1,0 +1,8 @@
+Flem Dogs Aquarium — Windows
+
+Extract the entire ZIP before running. Double-click Start Aquarium.cmd.
+Click to feed. Move the mouse near fish to scatter them. Scroll to zoom. Right-drag to rotate. Esc quits.
+Use Start Low Power.cmd if it runs slowly.
+This is the interactive aquarium, not a Windows wallpaper/screensaver.
+If it fails, send the aquarium.log file to the person who shared the app.
+Original project: https://github.com/akaloic/aquarium (MIT OR Apache-2.0).

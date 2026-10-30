@@ -122,7 +122,9 @@ mod macos {
                     continue;
                 }
                 let display: u32 = msg_send![number, unsignedIntValue];
-                if crate::macos::is_builtin(display) {
+                if crate::macos::is_builtin(display)
+                    && std::env::var_os("AQ_WALLPAPER_MAIN").is_none()
+                {
                     return Some((screen, display));
                 }
                 if display == crate::macos::main_display() {

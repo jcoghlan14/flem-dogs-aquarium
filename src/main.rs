@@ -39,7 +39,7 @@ fn main() {
     }
 
     let mut window = Window {
-        title: "Aquarium".into(),
+        title: "Flem Dogs Aquarium".into(),
         // Uncapped in capture mode so the frame time report is meaningful.
         present_mode: if config.screenshot.is_some() {
             PresentMode::AutoNoVsync

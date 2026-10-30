@@ -72,7 +72,7 @@ impl AppConfig {
                 "--frames" => cfg.frames = args.next().and_then(|s| s.parse().ok()).unwrap_or(90),
                 "-h" | "--help" => {
                     println!(
-                        "aquarium — real-time 3D aquarium\n\n\
+                        "Flem Dogs Aquarium — real-time 3D aquarium\n\n\
                          Options:\n  \
                          --wallpaper          live desktop wallpaper (behind the icons); sleeps\n  \
                                               in slow motion, wakes up when the mouse comes by\n  \
@@ -91,6 +91,11 @@ impl AppConfig {
                 }
                 other => warn!("unknown argument {other}"),
             }
+        }
+        #[cfg(not(target_os = "macos"))]
+        if cfg.wallpaper {
+            eprintln!("Desktop wallpaper mode is currently supported only on macOS. Use --windowed for the interactive aquarium.");
+            std::process::exit(2);
         }
         if cfg.low_power && cfg.quality == Quality::High {
             cfg.quality = Quality::Medium;
